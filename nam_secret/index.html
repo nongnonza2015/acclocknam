@@ -120,7 +120,7 @@
         <div id="pc-main-text"></div>
         
         <div id="pc-final">
-            <div id="pc-final-text">ภูมิใจในตัวเธอนะ... Happy Birthday ครับ 🤍</div>
+            <div id="pc-final-text">เก่งมาก ภูมิใจในตัวเธอนะ... Happy Birthday ครับ 🫶🏻</div>
             <button class="btn-start" style="font-size: 15px; padding: 8px 20px;" onclick="window.close();">รอบนี้จบจริงๆ ละ ไปได้!</button>
         </div>
     </div>
@@ -131,8 +131,8 @@
     <script>
         const storyData = [
             { img: "1.png", text: "21 ปีแล้วนะ เก่งมากที่เติบโตมาได้อย่างดีเลย 🤍" },
-            { img: "2.png", text: "ทุกคนมีวันที่เหนื่อย แต่เค้าเชื่อว่าเธอจะผ่านมันไปได้แน่" },
-            { img: "3.png", text: "แต่ถ้าเหนื่อยไม่ไหวพี่จะยอมโอ๋ น้องนิดนึงกะได้\nHappy ภานุลัษณ์ ปานันท์ day 🌸" }
+            { img: "2.png", text: "ทุกคนมีวันที่เหนื่อย แต่เค้าเชื่อว่าเธอจะผ่านมันไปได้แน่🫳🏻🫳🏻" },
+            { img: "3.png", text: "แต่ถ้าเหนื่อยไม่ไหวพี่จะยอมโอ๋ น้องนิดนึงกะได้🤏🏻\nHappy ภานุลัษณ์ ปานันท์ day 🌸" }
         ];
 
         let currentStory = 0;
@@ -363,23 +363,23 @@
                 const imgAdult = document.getElementById('img-adult');
 
                 // ไทม์ไลน์การเล่าเรื่อง (Pacing)
-                setTimeout(() => { fadePCObj(pcText, "อ้าว... ยังไม่ออกอีกหรอเนี่ย 😅"); }, 2000);
-                setTimeout(() => { fadePCObj(pcText, "นึกว่ากดปิดไปแล้ว... แต่ไหนๆ ก็ยังอยู่..."); }, 6000);
+                setTimeout(() => { fadePCObj(pcText,ทำไมจบแล้วน้องไม่ปิดสักที"); }, 2000);
+                setTimeout(() => { fadePCObj(pcText, "อ่ะๆ มีแถมนิดนึง😞"); }, 6000);
                 
                 // รูปเด็กขึ้นตรงกลาง
                 setTimeout(() => { 
-                    fadePCObj(pcText, "ใครจะไปคิดว่า เด็กผู้หญิงแก้มตุ่ยคนนี้..."); 
+                    fadePCObj(pcText, "ใครจะไปคิดว่า เด็กแก้มตุ่ยคนนี้..."); 
                     imgBaby.style.opacity = 1;
                     imgBaby.style.transform = "translate(-50%, -50%) rotate(-3deg)";
                 }, 10500);
 
                 setTimeout(() => { 
-                    fadePCObj(pcText, "ต้องใช้เวลาตั้ง 21 ปี... ผ่านอะไรมาตั้งมากมาย"); 
+                    fadePCObj(pcText, "ต้องใช้เวลาตั้ง 21 ปี... ผ่านอะไรมาตั้งเยอะแยะ"); 
                 }, 15500);
 
                 // รูปปัจจุบันโผล่ พร้อมเลื่อนรูปเด็กหลบไปซ้าย
                 setTimeout(() => { 
-                    fadePCObj(pcText, "...เพื่อเติบโตมาเป็น 'เธอ' ในเวอร์ชันที่เก่งและน่ารักที่สุดในวันนี้"); 
+                    fadePCObj(pcText, "...เพื่อเติบโตมาเป็น 'เธอ' ที่เก่งและน่ารักที่สุดในวันนี้"); 
                     imgBaby.style.left = "25%"; // เลื่อนซ้าย
                     imgAdult.style.opacity = 1; // เฟดขึ้นขวา
                     imgAdult.style.transform = "translate(-50%, -50%) rotate(4deg)";
