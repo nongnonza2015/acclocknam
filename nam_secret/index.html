@@ -34,7 +34,8 @@
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); animation: scan 2s linear infinite; z-index: 10; }
         @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
-        .status-text { font-size: 20px; font-weight: 500; height: 30px; color: #d1477a; margin-top: 15px; }
+        
+        .status-text { font-size: 20px; font-weight: 500; height: 30px; color: #d1477a; margin-top: 15px; transition: opacity 0.5s ease-in-out; }
         
         .btn-start { background-color: #e5989b; border: none; padding: 12px 25px; font-size: 18px; border-radius: 25px; color: white; font-family: 'Kanit', sans-serif; box-shadow: 0 4px 15px rgba(229, 152, 155, 0.4); cursor: pointer; transition: all 0.3s; margin-top: 20px; }
         .btn-start:hover { background-color: #b56576; transform: scale(1.05); }
@@ -51,10 +52,25 @@
         #photo { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
         #wish-text { font-size: 20px; padding: 0 30px; line-height: 1.5; min-height: 60px; transition: opacity 1s; }
         
-        #end-scene { display: none; text-align: center; padding: 40px; opacity: 0; transition: opacity 2s ease-in-out; }
+        #end-scene { display: none; text-align: center; padding: 40px; opacity: 0; transition: opacity 2s ease-in-out; position: absolute; width: 100%; z-index: 40; }
         .end-text { font-size: 20px; color: #333; margin-bottom: 20px; line-height: 1.6; }
 
         #fallback-btn { display: none; background-color: #ddd; color: #555; font-size: 14px; padding: 8px 15px; margin-top: 15px; border-radius: 20px; }
+
+        /* --- ซีนฉากจบพิเศษ (Post-Credit) --- */
+        #post-credit-scene { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 50; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 2s ease-in-out; }
+        
+        #pc-main-text { font-size: 18px; color: #666; text-align: center; opacity: 0; transition: opacity 1.5s ease-in-out; padding: 0 30px; line-height: 1.6; position: absolute; top: 70%; width: 100%; box-sizing: border-box; }
+        
+        #pc-images-container { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 340px; height: 260px; }
+        
+        .pc-pic { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 150px; height: 200px; object-fit: cover; opacity: 0; transition: all 1.8s ease-in-out; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border: 5px solid white; }
+        
+        #img-baby { left: 50%; } /* ตอนแรกอยู่ตรงกลาง */
+        #img-adult { left: 75%; } /* แสตนด์บายรอทางขวา */
+
+        #pc-final { display: none; flex-direction: column; align-items: center; opacity: 0; transition: opacity 2s; z-index: 60; text-align: center; }
+        #pc-final-text { font-size: 22px; color: #4a3b3b; margin-bottom: 30px; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -96,6 +112,19 @@
         </div>
     </div>
 
+    <div id="post-credit-scene">
+        <div id="pc-images-container">
+            <img id="img-baby" class="pc-pic" src="baby.png" alt="วัยเด็ก">
+            <img id="img-adult" class="pc-pic" src="adult.png" alt="ปัจจุบัน">
+        </div>
+        <div id="pc-main-text"></div>
+        
+        <div id="pc-final">
+            <div id="pc-final-text">ภูมิใจในตัวเธอนะ... Happy Birthday ครับ 🤍</div>
+            <button class="btn-start" style="font-size: 15px; padding: 8px 20px;" onclick="window.close();">รอบนี้จบจริงๆ ละ ไปได้!</button>
+        </div>
+    </div>
+
     <audio id="bg-music-1" src="music1.mp3" loop></audio>
     <audio id="bg-music-2" src="music2.mp3"></audio>
 
@@ -111,6 +140,25 @@
         let audioContext, analyser, microphone, blowInterval;
         let isCandleBlown = false; 
 
+        function fadeText(elementId, newText, newColor = "#d1477a") {
+            const el = document.getElementById(elementId);
+            el.style.opacity = 0; 
+            setTimeout(() => {
+                el.innerText = newText;
+                el.style.color = newColor;
+                el.style.opacity = 1; 
+            }, 500);
+        }
+
+        // ฟังก์ชันช่วยเฟดข้อความสำหรับฉากจบ
+        function fadePCObj(el, newText) {
+            el.style.opacity = 0;
+            setTimeout(() => {
+                el.innerText = newText;
+                el.style.opacity = 1;
+            }, 1000); // จางลงช้าๆ นุ่มนวลๆ
+        }
+
         function startExperience() {
             document.getElementById('intro-scene').style.display = 'none';
             
@@ -124,7 +172,6 @@
 
             setTimeout(() => {
                 document.getElementById('buildup-text').innerText = "พร้อมรับของขวัญหรือยัง? 🎁";
-                
                 setTimeout(() => {
                     buildup.style.opacity = 0;
                     setTimeout(() => {
@@ -137,10 +184,8 @@
 
         async function initSensors() {
             document.getElementById('camera-scene').style.display = 'block';
-
             try {
                 globalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
-                
                 const videoElement = document.getElementById('webcam');
                 videoElement.srcObject = globalStream;
 
@@ -151,12 +196,10 @@
                 analyser.fftSize = 256;
 
                 setTimeout(() => {
-                    document.getElementById('status-text').innerText = "✅ ก็ยิ้มน่ารักได้นิ เก่งมาก";
-                    document.getElementById('status-text').style.color = "#4CAF50";
+                    fadeText('status-text', '✅ ก็ยิ้มน่ารักได้นิ เก่งมาก', '#4CAF50');
                     document.getElementById('scan-line').style.display = 'none'; 
-                    setTimeout(transitionToCake, 2000); 
-                }, 4000);
-
+                    setTimeout(transitionToCake, 2500); 
+                }, 6000);
             } catch (err) {
                 console.error("Sensor error:", err);
                 document.getElementById('fallback-btn').style.display = 'inline-block';
@@ -165,12 +208,7 @@
         }
 
         function transitionToCake() {
-            if (globalStream) {
-                globalStream.getVideoTracks().forEach(track => track.stop());
-            }
-
-            // *** เอาบรรทัดหยุดเพลงออกไปแล้ว เพลงจะเล่นต่อไปเรื่อยๆ ***
-
+            if (globalStream) globalStream.getVideoTracks().forEach(track => track.stop());
             const camScene = document.getElementById('camera-scene');
             camScene.style.opacity = 0;
             
@@ -181,21 +219,15 @@
                 
                 setTimeout(() => {
                     cakeScene.style.opacity = 1;
-                    
                     const instructionText = document.getElementById('instruction-text');
-                    
                     setTimeout(() => {
                         instructionText.style.opacity = 0;
-                        
                         setTimeout(() => {
                             instructionText.innerHTML = "ถ้าอธิษฐานแล้ว...<br>เป่าลมใส่โทรศัพท์เพื่อดับเทียนเลย 💨";
                             instructionText.style.opacity = 1;
-                            
                             startBlowDetection(); 
                         }, 800); 
-                        
                     }, 5000); 
-
                 }, 100);
             }, 1000);
         }
@@ -205,7 +237,6 @@
                 document.getElementById('fallback-btn').style.display = 'inline-block';
                 return;
             }
-
             setTimeout(() => {
                 if(!isCandleBlown) document.getElementById('fallback-btn').style.display = 'inline-block';
             }, 5000);
@@ -215,12 +246,9 @@
 
             blowInterval = setInterval(() => {
                 if (isCandleBlown) return;
-
                 analyser.getByteFrequencyData(dataArray);
                 let sum = 0;
-                for(let i = 0; i < bufferLength; i++) {
-                    sum += dataArray[i];
-                }
+                for(let i = 0; i < bufferLength; i++) sum += dataArray[i];
                 let average = sum / bufferLength;
 
                 if (average > 90) { 
@@ -233,43 +261,31 @@
         function blowCandles() {
             if (isCandleBlown) return;
             isCandleBlown = true;
-
-            // *** ย้ายคำสั่งหยุดเพลงที่ 1 มาไว้ตรงนี้ (หยุดตอนเป่าเทียนดับ) ***
             document.getElementById('bg-music-1').pause(); 
-
-            if (globalStream) {
-                globalStream.getAudioTracks().forEach(track => track.stop());
-            }
+            if (globalStream) globalStream.getAudioTracks().forEach(track => track.stop());
             if (blowInterval) clearInterval(blowInterval);
 
             document.getElementById('cake-pic').src = "cake-off.png";
             document.getElementById('instruction-text').innerHTML = "ฟู่ววววว~ 💨<br><span style='font-size:16px; color:#888;'>(เทียนดับแล้วเก่งมาก!)</span>";
             document.getElementById('fallback-btn').style.display = 'none';
-            
             document.body.style.backgroundColor = "#e8dfdf"; 
             
             setTimeout(() => {
                 const cakeScene = document.getElementById('cake-scene');
                 cakeScene.style.opacity = 0;
-                
                 setTimeout(() => {
                     cakeScene.style.display = 'none';
-                    
                     const cheekyScene = document.getElementById('cheeky-scene');
                     cheekyScene.style.display = 'block';
                     setTimeout(() => cheekyScene.style.opacity = 1, 100);
-                    
                     setTimeout(() => {
                         cheekyScene.style.opacity = 0;
                         setTimeout(() => {
                             cheekyScene.style.display = 'none';
-                            
                             document.getElementById('bg-music-2').play();
                             startStory();
-
                         }, 1000);
                     }, 3500); 
-
                 }, 1000);
             }, 2000);
         }
@@ -322,8 +338,69 @@
                     const msg2 = document.getElementById('final-msg-2');
                     msg2.style.display = 'block';
                     msg2.animate([{opacity: 0, transform: 'translateY(10px)'}, {opacity: 1, transform: 'translateY(0)'}], {duration: 1000, fill: 'forwards'});
+                    
+                    // --- เริ่มกลไกฉากจบพิเศษ หลังจากขึ้นข้อความซึ้งๆ ครบ 8 วินาที ---
+                    setTimeout(() => {
+                        startPostCredit();
+                    }, 8000); 
                 }, 2000);
             }, 1500);
+        }
+
+        // ฟังก์ชันหัวใจหลักของความโรแมนติกชั้นเชิงภาพยนตร์
+        function startPostCredit() {
+            const endScene = document.getElementById('end-scene');
+            endScene.style.opacity = 0; // เฟดข้อความเก่าทิ้งให้หน้าจอว่างเปล่า
+            
+            setTimeout(() => {
+                endScene.style.display = 'none';
+                const pcScene = document.getElementById('post-credit-scene');
+                pcScene.style.display = 'flex';
+                setTimeout(() => pcScene.style.opacity = 1, 100);
+
+                const pcText = document.getElementById('pc-main-text');
+                const imgBaby = document.getElementById('img-baby');
+                const imgAdult = document.getElementById('img-adult');
+
+                // ไทม์ไลน์การเล่าเรื่อง (Pacing)
+                setTimeout(() => { fadePCObj(pcText, "อ้าว... ยังไม่ออกอีกหรอเนี่ย 😅"); }, 2000);
+                setTimeout(() => { fadePCObj(pcText, "นึกว่ากดปิดไปแล้ว... แต่ไหนๆ ก็ยังอยู่..."); }, 6000);
+                
+                // รูปเด็กขึ้นตรงกลาง
+                setTimeout(() => { 
+                    fadePCObj(pcText, "ใครจะไปคิดว่า เด็กผู้หญิงแก้มตุ่ยคนนี้..."); 
+                    imgBaby.style.opacity = 1;
+                    imgBaby.style.transform = "translate(-50%, -50%) rotate(-3deg)";
+                }, 10500);
+
+                setTimeout(() => { 
+                    fadePCObj(pcText, "ต้องใช้เวลาตั้ง 21 ปี... ผ่านอะไรมาตั้งมากมาย"); 
+                }, 15500);
+
+                // รูปปัจจุบันโผล่ พร้อมเลื่อนรูปเด็กหลบไปซ้าย
+                setTimeout(() => { 
+                    fadePCObj(pcText, "...เพื่อเติบโตมาเป็น 'เธอ' ในเวอร์ชันที่เก่งและน่ารักที่สุดในวันนี้"); 
+                    imgBaby.style.left = "25%"; // เลื่อนซ้าย
+                    imgAdult.style.opacity = 1; // เฟดขึ้นขวา
+                    imgAdult.style.transform = "translate(-50%, -50%) rotate(4deg)";
+                }, 20500);
+
+                // เฟดรูปและข้อความทิ้ง เตรียมเข้าฉากสุดท้าย
+                setTimeout(() => {
+                    pcText.style.opacity = 0;
+                    imgBaby.style.opacity = 0;
+                    imgAdult.style.opacity = 0;
+                }, 29000);
+
+                // ขึ้นข้อความจบปิ๊ง
+                setTimeout(() => {
+                    document.getElementById('pc-images-container').style.display = 'none';
+                    const finalDiv = document.getElementById('pc-final');
+                    finalDiv.style.display = 'flex';
+                    setTimeout(() => finalDiv.style.opacity = 1, 100);
+                }, 31000);
+
+            }, 2000); // ระยะเวลาที่ปล่อยหน้าจอว่างหลัง end scene เดิมจบ
         }
     </script>
 </body>
