@@ -6,7 +6,8 @@
     
     <meta property="og:title" content="To: ภานุลัษณ์ ปานันท์ 🎁">
     <meta property="og:description" content="มีของขวัญส่งมาให้ แตะเพื่อเปิดดูนะ...">
-    <meta property="og:image" content="preview.jpg"> <meta property="og:type" content="website">
+    <meta property="og:image" content="preview.png"> 
+    <meta property="og:type" content="website">
 
     <title>Happy 21st Birthday 🎂</title>
     
@@ -27,12 +28,11 @@
             transition: background-color 1.5s ease;
         }
 
-        /* --- Scene CSS (เหมือนเดิม) --- */
         #intro-scene, #buildup-scene, #camera-scene { text-align: center; z-index: 30; transition: opacity 1s; }
         #buildup-scene { display: none; opacity: 0; font-size: 22px; color: #d1477a; }
         .camera-container { width: 220px; height: 220px; margin: 0 auto 20px auto; border-radius: 50%; overflow: hidden; border: 5px solid #e5989b; position: relative; box-shadow: 0 10px 20px rgba(229, 152, 155, 0.4); }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); animation: scan 2s linear infinite; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); animation: scan 2s linear infinite; z-index: 10; }
         @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
         .status-text { font-size: 20px; font-weight: 500; height: 30px; color: #d1477a; margin-top: 15px; }
         
@@ -42,7 +42,8 @@
         #cake-scene { display: none; text-align: center; z-index: 10; opacity: 0; transition: opacity 1s; }
         .cake-img { width: 180px; height: auto; margin-bottom: 20px; animation: float 2s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        h2 { font-weight: 400; font-size: 24px; margin-bottom: 30px; line-height: 1.4;}
+        
+        h2 { font-weight: 400; font-size: 24px; margin-bottom: 30px; line-height: 1.4; transition: opacity 0.8s ease-in-out; }
 
         #cheeky-scene { display: none; text-align: center; opacity: 0; transition: opacity 1.5s ease-in-out; font-size: 24px; color: #8c7373; }
         #story-scene { display: none; text-align: center; width: 100%; opacity: 0; transition: opacity 1.5s ease-in-out; }
@@ -53,7 +54,6 @@
         #end-scene { display: none; text-align: center; padding: 40px; opacity: 0; transition: opacity 2s ease-in-out; }
         .end-text { font-size: 20px; color: #333; margin-bottom: 20px; line-height: 1.6; }
 
-        /* ปุ่มสำรองกรณีเป่าไมค์ไม่ติด */
         #fallback-btn { display: none; background-color: #ddd; color: #555; font-size: 14px; padding: 8px 15px; margin-top: 15px; border-radius: 20px; }
     </style>
 </head>
@@ -73,26 +73,26 @@
             <video id="webcam" autoplay playsinline muted></video>
             <div class="scan-line" id="scan-line"></div>
         </div>
-        <div class="status-text" id="status-text">ก่อนเปิด... ขอเช็ค "รอยยิ้ม" หน่อย 😊</div>
+        <div class="status-text" id="status-text"> ของขวัญไม่ฟรีอ่ะดิ ยิ้มก่อนเปิดด้วย </div>
     </div>
 
     <div id="cake-scene">
         <img class="cake-img" id="cake-pic" src="cake-on.png" alt="Cake">
-        <h2 id="instruction-text">อธิษฐานแล้ว...<br>เป่าลมใส่โทรศัพท์เพื่อดับเทียนเลย 💨</h2>
+        <h2 id="instruction-text">วันเกิดก็ต้องมีเค้กสิ<br>ก่อนเป่าเทียนหลับตาอธิษฐานก่อนนะ 😌</h2>
         <button class="btn-start" id="fallback-btn" onclick="blowCandles()">หรือแตะตรงนี้เพื่อดับเทียน</button>
     </div>
 
-    <div id="cheeky-scene">อธิษฐานถึงเค้าไหมนะ... 🤔✨</div>
+    <div id="cheeky-scene">แอบอธิษฐานถึงเค้ารึเปล่า 🤔</div>
 
     <div id="story-scene">
-        <div id="photo-container"><img id="photo" src="1.jpg" alt="Memory"></div>
+        <div id="photo-container"><img id="photo" src="1.png" alt="Memory"></div>
         <div id="wish-text"></div>
     </div>
 
     <div id="end-scene">
-        <div class="end-text" id="final-msg-1">ตั้งใจเขียนโค้ดทำมาให้เลยนะเนี่ย... ถือว่ารับของขวัญแล้วนะ</div>
+        <div class="end-text" id="final-msg-1">โปรแกรมเมอร์มือใหม่ก็งี้... คิดว่าจะไม่รู้อ่ะดิว่าวันนี้วันเกิด</div>
         <div class="end-text" id="final-msg-2" style="font-size: 16px; color: #777; margin-top: 30px; display: none;">
-            ส่วนถ้าอยากเลี้ยงกาแฟตอบแทน ไว้ลงมากรุงเทพฯ ค่อยว่ากัน<br>(ถ้าตอนนั้นคิวเราว่างอะนะ ☕️😎)
+            สุขสันต์วันเกิดนะ ดีใจที่เราได้เจอกัน<br>ขอบคุณที่มาเป็นเรื่องโชคดีในชีวิตเค้านะ 🤍
         </div>
     </div>
 
@@ -101,15 +101,15 @@
 
     <script>
         const storyData = [
-            { img: "1.jpg", text: "21 ปีแล้วนะ... เก่งมากที่เติบโตมาได้อย่างดีเลย 🤍" },
-            { img: "2.jpg", text: "รู้ว่าเรียนเภสัชมันหนัก อ่านหนังสือดึกตลอด... แต่ความพยายามของน้ำโคตรเท่เลยรู้ป่าว" },
-            { img: "3.jpg", text: "ขอให้เชียงใหม่ใจดีกับน้ำ เหมือนที่น้ำใจดีกับคนอื่นเสมอนะ\nHappy ภานุลัษณ์ ปานันท์ day 🌸" }
+            { img: "1.png", text: "21 ปีแล้วนะ เก่งมากที่เติบโตมาได้อย่างดีเลย 🤍" },
+            { img: "2.png", text: "ทุกคนมีวันที่เหนื่อย แต่เค้าเชื่อว่าเธอจะผ่านมันไปได้แน่" },
+            { img: "3.png", text: "แต่ถ้าเหนื่อยไม่ไหวพี่จะยอมโอ๋ น้องนิดนึงกะได้\nHappy ภานุลัษณ์ ปานันท์ day 🌸" }
         ];
 
         let currentStory = 0;
         let globalStream = null;
         let audioContext, analyser, microphone, blowInterval;
-        let isCandleBlown = false; // ป้องกันการเป่าซ้ำ
+        let isCandleBlown = false; 
 
         function startExperience() {
             document.getElementById('intro-scene').style.display = 'none';
@@ -129,54 +129,47 @@
                     buildup.style.opacity = 0;
                     setTimeout(() => {
                         buildup.style.display = 'none';
-                        initSensors(); // ขอทั้งกล้องและไมค์พร้อมกัน
+                        initSensors(); 
                     }, 1000);
                 }, 2500); 
             }, 3000); 
         }
 
-        // === ระบบขออนุญาตกล้องและไมค์ ===
         async function initSensors() {
             document.getElementById('camera-scene').style.display = 'block';
 
             try {
-                // ขอวิดีโอกล้องหน้า และ เสียงจากไมค์
                 globalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
                 
-                // จัดการวิดีโอ
                 const videoElement = document.getElementById('webcam');
                 videoElement.srcObject = globalStream;
 
-                // จัดการเสียง (เซ็ตระบบรอไว้ก่อน)
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(globalStream);
                 microphone.connect(analyser);
                 analyser.fftSize = 256;
 
-                // รอ 4 วิ ทำเป็นสแกนรอยยิ้ม
                 setTimeout(() => {
-                    document.getElementById('status-text').innerText = "✅ รอยยิ้มผ่านเกณฑ์ น่ารักเกินร้อย!";
+                    document.getElementById('status-text').innerText = "✅ ก็ยิ้มน่ารักได้นิ เก่งมาก";
                     document.getElementById('status-text').style.color = "#4CAF50";
-                    document.getElementById('scan-line').style.display = 'none';
-                    setTimeout(transitionToCake, 2000);
+                    document.getElementById('scan-line').style.display = 'none'; 
+                    setTimeout(transitionToCake, 2000); 
                 }, 4000);
 
             } catch (err) {
                 console.error("Sensor error:", err);
-                // ถ้าเขาไม่อนุญาต หรือคอม/มือถือไม่มีไมค์ ให้ข้ามไปหน้าเค้กแล้วเปิดปุ่มกดแทน
                 document.getElementById('fallback-btn').style.display = 'inline-block';
                 transitionToCake();
             }
         }
 
         function transitionToCake() {
-            // ปิดเฉพาะกล้องวิดีโอ แต่เก็บไมค์ไว้เป่าเทียน
             if (globalStream) {
                 globalStream.getVideoTracks().forEach(track => track.stop());
             }
 
-            document.getElementById('bg-music-1').pause(); // หยุดเพลงสร้างความเงียบตอนอธิษฐาน
+            // *** เอาบรรทัดหยุดเพลงออกไปแล้ว เพลงจะเล่นต่อไปเรื่อยๆ ***
 
             const camScene = document.getElementById('camera-scene');
             camScene.style.opacity = 0;
@@ -185,21 +178,34 @@
                 camScene.style.display = 'none';
                 const cakeScene = document.getElementById('cake-scene');
                 cakeScene.style.display = 'block';
+                
                 setTimeout(() => {
                     cakeScene.style.opacity = 1;
-                    startBlowDetection(); // เริ่มตรวจจับเสียงลมหายใจ
+                    
+                    const instructionText = document.getElementById('instruction-text');
+                    
+                    setTimeout(() => {
+                        instructionText.style.opacity = 0;
+                        
+                        setTimeout(() => {
+                            instructionText.innerHTML = "ถ้าอธิษฐานแล้ว...<br>เป่าลมใส่โทรศัพท์เพื่อดับเทียนเลย 💨";
+                            instructionText.style.opacity = 1;
+                            
+                            startBlowDetection(); 
+                        }, 800); 
+                        
+                    }, 5000); 
+
                 }, 100);
             }, 1000);
         }
 
-        // === ระบบตรวจจับการเป่าไมค์ ===
         function startBlowDetection() {
             if (!analyser) {
                 document.getElementById('fallback-btn').style.display = 'inline-block';
                 return;
             }
 
-            // เผื่อระบบรวน ให้แสดงปุ่มสำรองไว้หลังจากผ่านไป 5 วินาที
             setTimeout(() => {
                 if(!isCandleBlown) document.getElementById('fallback-btn').style.display = 'inline-block';
             }, 5000);
@@ -217,7 +223,6 @@
                 }
                 let average = sum / bufferLength;
 
-                // ตั้งค่า Threshold ความดัง (ค่าลมเป่า) ปกติเสียงพูดจะราวๆ 20-50 เสียงลมกระแทกไมค์จะพุ่งไป 80-150
                 if (average > 90) { 
                     clearInterval(blowInterval);
                     blowCandles();
@@ -229,7 +234,9 @@
             if (isCandleBlown) return;
             isCandleBlown = true;
 
-            // ปิดไมค์ทั้งหมดเพื่อประหยัดแบต
+            // *** ย้ายคำสั่งหยุดเพลงที่ 1 มาไว้ตรงนี้ (หยุดตอนเป่าเทียนดับ) ***
+            document.getElementById('bg-music-1').pause(); 
+
             if (globalStream) {
                 globalStream.getAudioTracks().forEach(track => track.stop());
             }
@@ -267,7 +274,6 @@
             }, 2000);
         }
 
-        // --- ระบบ Story (เหมือนเดิม) ---
         function startStory() {
             const storyScene = document.getElementById('story-scene');
             storyScene.style.display = 'block';
