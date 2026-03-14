@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta property="og:title" content="To: ภานุลัษณ์ ปานันท์ 🎁">
+    <meta property="og:description" content="มีของขวัญส่งมาให้ แตะเพื่อเปิดดูนะ...">
+    <meta property="og:image" content="preview.jpg"> <meta property="og:type" content="website">
+
+    <title>Happy 21st Birthday 🎂</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fcf4f4;
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #5a4b4b;
+            transition: background-color 1.5s ease;
+        }
+
+        /* --- Scene CSS (เหมือนเดิม) --- */
+        #intro-scene, #buildup-scene, #camera-scene { text-align: center; z-index: 30; transition: opacity 1s; }
+        #buildup-scene { display: none; opacity: 0; font-size: 22px; color: #d1477a; }
+        .camera-container { width: 220px; height: 220px; margin: 0 auto 20px auto; border-radius: 50%; overflow: hidden; border: 5px solid #e5989b; position: relative; box-shadow: 0 10px 20px rgba(229, 152, 155, 0.4); }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background-color: rgba(255, 255, 255, 0.8); box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); animation: scan 2s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+        .status-text { font-size: 20px; font-weight: 500; height: 30px; color: #d1477a; margin-top: 15px; }
+        
+        .btn-start { background-color: #e5989b; border: none; padding: 12px 25px; font-size: 18px; border-radius: 25px; color: white; font-family: 'Kanit', sans-serif; box-shadow: 0 4px 15px rgba(229, 152, 155, 0.4); cursor: pointer; transition: all 0.3s; margin-top: 20px; }
+        .btn-start:hover { background-color: #b56576; transform: scale(1.05); }
+
+        #cake-scene { display: none; text-align: center; z-index: 10; opacity: 0; transition: opacity 1s; }
+        .cake-img { width: 180px; height: auto; margin-bottom: 20px; animation: float 2s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        h2 { font-weight: 400; font-size: 24px; margin-bottom: 30px; line-height: 1.4;}
+
+        #cheeky-scene { display: none; text-align: center; opacity: 0; transition: opacity 1.5s ease-in-out; font-size: 24px; color: #8c7373; }
+        #story-scene { display: none; text-align: center; width: 100%; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        #photo-container { width: 260px; height: 320px; margin: 0 auto 30px auto; border-radius: 10px; background-color: white; padding: 10px 10px 40px 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: rotate(-2deg); transition: transform 1s, opacity 1s; }
+        #photo { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+        #wish-text { font-size: 20px; padding: 0 30px; line-height: 1.5; min-height: 60px; transition: opacity 1s; }
+        
+        #end-scene { display: none; text-align: center; padding: 40px; opacity: 0; transition: opacity 2s ease-in-out; }
+        .end-text { font-size: 20px; color: #333; margin-bottom: 20px; line-height: 1.6; }
+
+        /* ปุ่มสำรองกรณีเป่าไมค์ไม่ติด */
+        #fallback-btn { display: none; background-color: #ddd; color: #555; font-size: 14px; padding: 8px 15px; margin-top: 15px; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-scene">
+        <h2>มีของขวัญส่งมาให้ 🎁</h2>
+        <button class="btn-start" onclick="startExperience()">แตะเพื่อเปิดดู</button>
+    </div>
+
+    <div id="buildup-scene">
+        <div id="buildup-text">กำลังโหลดความทรงจำ... ⏳</div>
+    </div>
+
+    <div id="camera-scene" style="display: none;">
+        <div class="camera-container">
+            <video id="webcam" autoplay playsinline muted></video>
+            <div class="scan-line" id="scan-line"></div>
+        </div>
+        <div class="status-text" id="status-text">ก่อนเปิด... ขอเช็ค "รอยยิ้ม" หน่อย 😊</div>
+    </div>
+
+    <div id="cake-scene">
+        <img class="cake-img" id="cake-pic" src="cake-on.png" alt="Cake">
+        <h2 id="instruction-text">อธิษฐานแล้ว...<br>เป่าลมใส่โทรศัพท์เพื่อดับเทียนเลย 💨</h2>
+        <button class="btn-start" id="fallback-btn" onclick="blowCandles()">หรือแตะตรงนี้เพื่อดับเทียน</button>
+    </div>
+
+    <div id="cheeky-scene">อธิษฐานถึงเค้าไหมนะ... 🤔✨</div>
+
+    <div id="story-scene">
+        <div id="photo-container"><img id="photo" src="1.jpg" alt="Memory"></div>
+        <div id="wish-text"></div>
+    </div>
+
+    <div id="end-scene">
+        <div class="end-text" id="final-msg-1">ตั้งใจเขียนโค้ดทำมาให้เลยนะเนี่ย... ถือว่ารับของขวัญแล้วนะ</div>
+        <div class="end-text" id="final-msg-2" style="font-size: 16px; color: #777; margin-top: 30px; display: none;">
+            ส่วนถ้าอยากเลี้ยงกาแฟตอบแทน ไว้ลงมากรุงเทพฯ ค่อยว่ากัน<br>(ถ้าตอนนั้นคิวเราว่างอะนะ ☕️😎)
+        </div>
+    </div>
+
+    <audio id="bg-music-1" src="music1.mp3" loop></audio>
+    <audio id="bg-music-2" src="music2.mp3"></audio>
+
+    <script>
+        const storyData = [
+            { img: "1.jpg", text: "21 ปีแล้วนะ... เก่งมากที่เติบโตมาได้อย่างดีเลย 🤍" },
+            { img: "2.jpg", text: "รู้ว่าเรียนเภสัชมันหนัก อ่านหนังสือดึกตลอด... แต่ความพยายามของน้ำโคตรเท่เลยรู้ป่าว" },
+            { img: "3.jpg", text: "ขอให้เชียงใหม่ใจดีกับน้ำ เหมือนที่น้ำใจดีกับคนอื่นเสมอนะ\nHappy ภานุลัษณ์ ปานันท์ day 🌸" }
+        ];
+
+        let currentStory = 0;
+        let globalStream = null;
+        let audioContext, analyser, microphone, blowInterval;
+        let isCandleBlown = false; // ป้องกันการเป่าซ้ำ
+
+        function startExperience() {
+            document.getElementById('intro-scene').style.display = 'none';
+            
+            const music1 = document.getElementById('bg-music-1');
+            music1.volume = 0.6; 
+            music1.play();
+
+            const buildup = document.getElementById('buildup-scene');
+            buildup.style.display = 'block';
+            setTimeout(() => buildup.style.opacity = 1, 100);
+
+            setTimeout(() => {
+                document.getElementById('buildup-text').innerText = "พร้อมรับของขวัญหรือยัง? 🎁";
+                
+                setTimeout(() => {
+                    buildup.style.opacity = 0;
+                    setTimeout(() => {
+                        buildup.style.display = 'none';
+                        initSensors(); // ขอทั้งกล้องและไมค์พร้อมกัน
+                    }, 1000);
+                }, 2500); 
+            }, 3000); 
+        }
+
+        // === ระบบขออนุญาตกล้องและไมค์ ===
+        async function initSensors() {
+            document.getElementById('camera-scene').style.display = 'block';
+
+            try {
+                // ขอวิดีโอกล้องหน้า และ เสียงจากไมค์
+                globalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                
+                // จัดการวิดีโอ
+                const videoElement = document.getElementById('webcam');
+                videoElement.srcObject = globalStream;
+
+                // จัดการเสียง (เซ็ตระบบรอไว้ก่อน)
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(globalStream);
+                microphone.connect(analyser);
+                analyser.fftSize = 256;
+
+                // รอ 4 วิ ทำเป็นสแกนรอยยิ้ม
+                setTimeout(() => {
+                    document.getElementById('status-text').innerText = "✅ รอยยิ้มผ่านเกณฑ์ น่ารักเกินร้อย!";
+                    document.getElementById('status-text').style.color = "#4CAF50";
+                    document.getElementById('scan-line').style.display = 'none';
+                    setTimeout(transitionToCake, 2000);
+                }, 4000);
+
+            } catch (err) {
+                console.error("Sensor error:", err);
+                // ถ้าเขาไม่อนุญาต หรือคอม/มือถือไม่มีไมค์ ให้ข้ามไปหน้าเค้กแล้วเปิดปุ่มกดแทน
+                document.getElementById('fallback-btn').style.display = 'inline-block';
+                transitionToCake();
+            }
+        }
+
+        function transitionToCake() {
+            // ปิดเฉพาะกล้องวิดีโอ แต่เก็บไมค์ไว้เป่าเทียน
+            if (globalStream) {
+                globalStream.getVideoTracks().forEach(track => track.stop());
+            }
+
+            document.getElementById('bg-music-1').pause(); // หยุดเพลงสร้างความเงียบตอนอธิษฐาน
+
+            const camScene = document.getElementById('camera-scene');
+            camScene.style.opacity = 0;
+            
+            setTimeout(() => {
+                camScene.style.display = 'none';
+                const cakeScene = document.getElementById('cake-scene');
+                cakeScene.style.display = 'block';
+                setTimeout(() => {
+                    cakeScene.style.opacity = 1;
+                    startBlowDetection(); // เริ่มตรวจจับเสียงลมหายใจ
+                }, 100);
+            }, 1000);
+        }
+
+        // === ระบบตรวจจับการเป่าไมค์ ===
+        function startBlowDetection() {
+            if (!analyser) {
+                document.getElementById('fallback-btn').style.display = 'inline-block';
+                return;
+            }
+
+            // เผื่อระบบรวน ให้แสดงปุ่มสำรองไว้หลังจากผ่านไป 5 วินาที
+            setTimeout(() => {
+                if(!isCandleBlown) document.getElementById('fallback-btn').style.display = 'inline-block';
+            }, 5000);
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            blowInterval = setInterval(() => {
+                if (isCandleBlown) return;
+
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for(let i = 0; i < bufferLength; i++) {
+                    sum += dataArray[i];
+                }
+                let average = sum / bufferLength;
+
+                // ตั้งค่า Threshold ความดัง (ค่าลมเป่า) ปกติเสียงพูดจะราวๆ 20-50 เสียงลมกระแทกไมค์จะพุ่งไป 80-150
+                if (average > 90) { 
+                    clearInterval(blowInterval);
+                    blowCandles();
+                }
+            }, 100);
+        }
+
+        function blowCandles() {
+            if (isCandleBlown) return;
+            isCandleBlown = true;
+
+            // ปิดไมค์ทั้งหมดเพื่อประหยัดแบต
+            if (globalStream) {
+                globalStream.getAudioTracks().forEach(track => track.stop());
+            }
+            if (blowInterval) clearInterval(blowInterval);
+
+            document.getElementById('cake-pic').src = "cake-off.png";
+            document.getElementById('instruction-text').innerHTML = "ฟู่ววววว~ 💨<br><span style='font-size:16px; color:#888;'>(เทียนดับแล้วเก่งมาก!)</span>";
+            document.getElementById('fallback-btn').style.display = 'none';
+            
+            document.body.style.backgroundColor = "#e8dfdf"; 
+            
+            setTimeout(() => {
+                const cakeScene = document.getElementById('cake-scene');
+                cakeScene.style.opacity = 0;
+                
+                setTimeout(() => {
+                    cakeScene.style.display = 'none';
+                    
+                    const cheekyScene = document.getElementById('cheeky-scene');
+                    cheekyScene.style.display = 'block';
+                    setTimeout(() => cheekyScene.style.opacity = 1, 100);
+                    
+                    setTimeout(() => {
+                        cheekyScene.style.opacity = 0;
+                        setTimeout(() => {
+                            cheekyScene.style.display = 'none';
+                            
+                            document.getElementById('bg-music-2').play();
+                            startStory();
+
+                        }, 1000);
+                    }, 3500); 
+
+                }, 1000);
+            }, 2000);
+        }
+
+        // --- ระบบ Story (เหมือนเดิม) ---
+        function startStory() {
+            const storyScene = document.getElementById('story-scene');
+            storyScene.style.display = 'block';
+            setTimeout(() => { storyScene.style.opacity = 1; updateStoryContent(); }, 100);
+
+            const slideInterval = setInterval(() => {
+                currentStory++;
+                if (currentStory < storyData.length) {
+                    fadeTransition(updateStoryContent);
+                } else {
+                    clearInterval(slideInterval);
+                    showEnding();
+                }
+            }, 4500);
+        }
+
+        function updateStoryContent() {
+            const container = document.getElementById('photo-container');
+            container.style.transform = currentStory % 2 === 0 ? "rotate(-2deg)" : "rotate(3deg)";
+            document.getElementById('photo').src = storyData[currentStory].img;
+            document.getElementById('wish-text').innerText = storyData[currentStory].text;
+        }
+
+        function fadeTransition(callback) {
+            const photoEl = document.getElementById('photo-container');
+            const wishEl = document.getElementById('wish-text');
+            photoEl.style.opacity = 0; wishEl.style.opacity = 0;
+            setTimeout(() => {
+                callback();
+                photoEl.style.opacity = 1; wishEl.style.opacity = 1;
+            }, 800);
+        }
+
+        function showEnding() {
+            const storyScene = document.getElementById('story-scene');
+            storyScene.style.opacity = 0;
+            document.body.style.backgroundColor = "#f0f0f0"; 
+
+            setTimeout(() => {
+                storyScene.style.display = 'none';
+                const endScene = document.getElementById('end-scene');
+                endScene.style.display = 'block';
+                setTimeout(() => endScene.style.opacity = 1, 100);
+
+                setTimeout(() => {
+                    const msg2 = document.getElementById('final-msg-2');
+                    msg2.style.display = 'block';
+                    msg2.animate([{opacity: 0, transform: 'translateY(10px)'}, {opacity: 1, transform: 'translateY(0)'}], {duration: 1000, fill: 'forwards'});
+                }, 2000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
