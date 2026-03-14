@@ -14,19 +14,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap');
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #fcf4f4;
-            font-family: 'Kanit', sans-serif;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #5a4b4b;
-            transition: background-color 1.5s ease;
-        }
+        body { margin: 0; padding: 0; background-color: #fcf4f4; font-family: 'Kanit', sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; color: #5a4b4b; transition: background-color 1.5s ease; }
 
         #intro-scene, #buildup-scene, #camera-scene { text-align: center; z-index: 30; transition: opacity 1s; }
         #buildup-scene { display: none; opacity: 0; font-size: 22px; color: #d1477a; }
@@ -57,15 +45,10 @@
 
         #fallback-btn { display: none; background-color: #ddd; color: #555; font-size: 14px; padding: 8px 15px; margin-top: 15px; border-radius: 20px; }
 
-        /* --- ซีนฉากจบพิเศษ --- */
         #post-credit-scene { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; z-index: 50; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 2s ease-in-out; }
-        
         #pc-main-text { font-size: 18px; color: #666; text-align: center; opacity: 0; transition: opacity 1.5s ease-in-out; padding: 0 30px; line-height: 1.6; position: absolute; top: 70%; width: 100%; box-sizing: border-box; }
-        
         #pc-images-container { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 340px; height: 260px; }
-        
         .pc-pic { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 150px; height: 200px; object-fit: cover; opacity: 0; transition: all 1.8s ease-in-out; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border: 5px solid white; }
-        
         #img-baby { left: 50%; } 
         #img-adult { left: 75%; } 
 
@@ -125,8 +108,8 @@
         </div>
     </div>
 
-    <audio id="bg-music-1" src="music1.mp3" loop></audio>
-    <audio id="bg-music-2" src="music2.mp3"></audio>
+    <audio id="bg-music-1" src="music1.mp3" preload="auto" loop></audio>
+    <audio id="bg-music-2" src="music2.mp3" preload="auto"></audio>
 
     <script>
         const storyData = [
@@ -163,7 +146,9 @@
             
             const music1 = document.getElementById('bg-music-1');
             music1.volume = 0.6; 
-            music1.play();
+            // เริ่มสั่งให้เพลง 2 โหลดมารอตั้งแต่ตอนกดปุ่มเริ่ม
+            document.getElementById('bg-music-2').load();
+            music1.play().catch(e => console.log(e));
 
             const buildup = document.getElementById('buildup-scene');
             buildup.style.display = 'block';
@@ -184,8 +169,6 @@
         async function initSensors() {
             document.getElementById('camera-scene').style.display = 'block';
             try {
-                // แก้กระตุก: ลดความละเอียดวิดีโอ 
-                // แก้เป่าไม่ดับ: ปิด noise suppression ให้รับเสียงลมเป่าได้
                 globalStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: 'user', width: { ideal: 320 }, frameRate: { ideal: 15 } }, 
                     audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } 
@@ -198,7 +181,7 @@
                 analyser = audioContext.createAnalyser();
                 microphone = audioContext.createMediaStreamSource(globalStream);
                 microphone.connect(analyser);
-                analyser.fftSize = 512; // ปรับความละเอียดการจับเสียงนิดนึง
+                analyser.fftSize = 512; 
 
                 setTimeout(() => {
                     fadeText('status-text', '✅ ก็ยิ้มน่ารักได้นิ เก่งมาก', '#4CAF50');
@@ -213,7 +196,10 @@
         }
 
         function transitionToCake() {
-            if (globalStream) globalStream.getVideoTracks().forEach(track => track.stop());
+            if (globalStream) {
+                // หยุดการทำงานของกล้องวิดีโอเพื่อประหยัดแบตเตอรี่และ CPU
+                globalStream.getVideoTracks().forEach(track => track.stop());
+            }
             const camScene = document.getElementById('camera-scene');
             camScene.style.opacity = 0;
             
@@ -244,7 +230,7 @@
             }
             setTimeout(() => {
                 if(!isCandleBlown) document.getElementById('fallback-btn').style.display = 'inline-block';
-            }, 6000); // ให้เวลาเป่านานขึ้นนิดนึงก่อนขึ้นปุ่มช่วย
+            }, 6000); 
 
             const bufferLength = analyser.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
@@ -256,7 +242,6 @@
                 for(let i = 0; i < bufferLength; i++) sum += dataArray[i];
                 let average = sum / bufferLength;
 
-                // ลดเกณฑ์ความดังลงมาเหลือแค่ 40 (จากเดิม 90) จะได้เป่าง่ายๆ
                 if (average > 40) { 
                     clearInterval(blowInterval);
                     blowCandles();
@@ -268,8 +253,15 @@
             if (isCandleBlown) return;
             isCandleBlown = true;
             document.getElementById('bg-music-1').pause(); 
-            if (globalStream) globalStream.getAudioTracks().forEach(track => track.stop());
+            
+            // ล้างหน่วยความจำ: ปิดไมโครโฟนและระบบเสียงสแกนทั้งหมดให้เกลี้ยง เพื่อให้เครื่องไม่กระตุก
+            if (globalStream) {
+                globalStream.getTracks().forEach(track => track.stop());
+            }
             if (blowInterval) clearInterval(blowInterval);
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close(); 
+            }
 
             document.getElementById('cake-pic').src = "cake-off.png";
             document.getElementById('instruction-text').innerHTML = "ฟู่ววววว~ 💨<br><span style='font-size:16px; color:#888;'>(เทียนดับแล้วเก่งมาก!)</span>";
@@ -288,7 +280,9 @@
                         cheekyScene.style.opacity = 0;
                         setTimeout(() => {
                             cheekyScene.style.display = 'none';
-                            document.getElementById('bg-music-2').play();
+                            // เล่นเพลงที่ 2 (ที่โหลดรอไว้แล้ว) แบบลื่นๆ
+                            const music2 = document.getElementById('bg-music-2');
+                            music2.play().catch(e => console.log("Play error:", e));
                             startStory();
                         }, 1000);
                     }, 3500); 
